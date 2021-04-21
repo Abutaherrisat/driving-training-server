@@ -53,6 +53,15 @@ client.connect((err) => {
     });
   });
 
+  app.delete('/delete/:id', (req, res) => {
+    const id = ObjectId(req.params.id)
+    serviceCollection.deleteOne({ _id: id })
+
+      .then(result => {
+        res.send(result.deletedCount>0);
+      })
+
+  })
   app.post("/addOrder", (req, res) => {
     const order = req.body;
     console.log(order);
@@ -62,7 +71,8 @@ client.connect((err) => {
   });
 
   app.get("/orders", (req, res) => {
-    orderCollection.find({}).toArray((err, documents) => {
+    orderCollection.find({email:req.query.email}).toArray((err, documents) => {
+      console.log(documents);
       res.send(documents);
     });
   });
@@ -106,10 +116,10 @@ client.connect((err) => {
     });
   });
 
-  app.post("/isAdmin", (req, res) => {
-    const email = req.body.email;
-    adminCollection.find({ email: email }).toArray((err, admins) => {
-      res.send(admins.length > 0);
+  app.get("/isAdmin", (req, res) => {
+    adminCollection.find({ email: req.query.email }).toArray((err, admins) => {
+      console.log(admins);
+      res.send(admins.length>0);
     });
   });
 
